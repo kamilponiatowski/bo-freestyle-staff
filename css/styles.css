@@ -1168,3 +1168,33 @@ footer p {
         padding: 0.8rem 1rem;
     }
 }
+
+/* 
+ * Te style naprawiają problem z nachodzącymi bulletami w modalu ze sztuczkami
+ * Dodaj to do pliku css/styles.css
+ */
+
+ .skill-tips ul {
+    margin-bottom: 1em;
+    padding-left: 2.5em;  /* Zwiększony margines z lewej, aby bullet points nie nachodziły */
+}
+
+.skill-tips li {
+    margin-bottom: 0.5em; /* Dodatkowy odstęp między elementami listy */
+    position: relative;
+}
+
+/* Poprawione style dla modalu i innych elementów */
+.modal-body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Poprawa stosunku aspektu dla video, aby nie było zbyt wysokie */
+.skill-video-container {
+    margin: 1rem 0;
+    position: relative;
+    padding-bottom: 50%; /* Zmienione z 56.25% na mniejszą wartość */
+    height: 0;
+}
