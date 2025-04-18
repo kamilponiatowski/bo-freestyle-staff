@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freestyle Staff Academy - Tracker Postępów dla Muszki</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Strona powitalna -->
+    <div id="welcomePage" class="page active">
+        <div class="container welcome-container">
+            <div class="welcome-logo">
+                <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5" />
+                    <path d="M30 70L70 30M30 50L70 50M30 30L70 70" stroke="white" stroke-width="5" stroke-linecap="round" />
+                </svg>
+            </div>
+            <h1>Witaj w Freestyle Staff Academy!</h1>
+            <p>Twój osobisty asystent treningowy do śledzenia postępów w nauce kręcenia staffem.
+            Aplikacja pozwoli Ci monitorować wykonane powtórzenia, zdobywać odznaki i systematycznie podążać 
+            ścieżką od podstaw do mistrzostwa.</p>
+            <p>Zapraszamy do akademii, <strong>Muszko</strong>! 💜</p>
+            
+            <div class="welcome-actions">
+                <button id="enterApp" class="btn btn-primary btn-block">Rozpocznij przygodę</button>
+                <div class="text-center mt-3">
+                    <small>Z miłością przygotował Żuczek</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Główna aplikacja -->
+    <div id="mainApp" class="page">
+        <header>
+            <div class="container">
+                <div class="logo">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="#8e44ad" />
+                        <path d="M30 70L70 30M30 50L70 50M30 30L70 70" stroke="white" stroke-width="5" stroke-linecap="round" />
+                    </svg>
+                    <span>Freestyle Staff Academy</span>
+                </div>
+                <div class="user-profile" id="userProfileButton">
+                    <img src="https://api.dicebear.com/6.x/adventurer/svg?seed=Mimi" alt="Avatar użytkownika">
+                    <span id="userName">Muszka</span>
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="#" class="active" data-page="dashboard">Podsumowanie</a></li>
+                    <li><a href="#" data-page="skills">Tricki i umiejętności</a></li>
+                    <li><a href="#" data-page="badges">Odznaki</a></li>
+                    <li><a href="#" data-page="library">Biblioteka</a></li>
+                    <li><a href="#" data-page="progress">Mój postęp</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main>
+            <div class="container">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page-content active">
+                    <h1 class="page-title">Witaj, Muszka! 💜</h1>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card stat-card">
+                            <div class="progress-ring">
+                                <svg>
+                                    <circle class="progress-ring-circle progress-ring-bg" cx="60" cy="60" r="52" />
+                                    <circle class="progress-ring-circle progress-ring-value" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="245.05" />
+                                </svg>
+                                <div class="progress-ring-text">
+                                    <div class="progress-ring-percentage">25%</div>
+                                    <div class="progress-ring-label">ukończone</div>
+                                </div>
+                            </div>
+                            <h3>Ogólny postęp</h3>
+                        </div>
+                        
+                        <div class="dashboard-card stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Tricki opanowane</div>
+                            <h3>Wykonane umiejętności</h3>
+                        </div>
+                        
+                        <div class="dashboard-card stat-card">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">W trakcie nauki</div>
+                            <h3>Tricki w trakcie</h3>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>Ostatnie odznaki</h3>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span class="progress-title">Pierwsze kroki</span>
+                                    <span class="progress-percentage">Zdobyta!</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-value" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span class="progress-title">Mistrz Basic Flow</span>
+                                    <span class="progress-percentage">75%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-value" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span class="progress-title">1000 powtórzeń</span>
+                                    <span class="progress-percentage">10%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-value" style="width: 10%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="page-title">Dzisiejszy trening</h2>
+
+                    <div class="dashboard-card">
+                        <h3>Plan treningowy na dziś</h3>
+                        <ul class="mb-3">
+                            <li>Basic Flow: 50 powtórzeń (obie ręce)</li>
+                            <li>High/Low Whip: 25 powtórzeń</li>
+                            <li>Neck Wrap: 20 powtórzeń</li>
+                        </ul>
+                        <button class="btn btn-primary" id="startTodayTraining">Rozpocznij dzisiejszy trening</button>
+                    </div>
+                    
+                    <h2 class="page-title">Twoje następne kroki</h2>
+                    
+                    <div class="skills-container">
+                        <div class="skill-category">
+                            <div class="category-header">
+                                Tricki do opanowania
+                            </div>
+                            <div class="skill-list">
+                                <div class="skill-item" data-skill-id="basic-flow">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">Basic Flow</div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="neck-wrap">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">Neck Wrap</div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="high-low-whip">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">High/Low Whip <span class="custom-badge badge-in-progress">W trakcie</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 45%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="two-hand-spin">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">2 Hand Spin <span class="custom-badge badge-new">Nowy</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 15%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills Page -->
+                <div id="skillsPage" class="page-content">
+                    <h1 class="page-title">Tricki i umiejętności</h1>
+                    
+                    <div class="skills-container">
+                        <div class="skill-category">
+                            <div class="category-header">
+                                Podstawowe umiejętności
+                                <span class="category-progress">4/5</span>
+                            </div>
+                            <div class="skill-list">
+                                <div class="skill-item" data-skill-id="basic-flow">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">Basic Flow <span class="custom-badge badge-completed">Ukończone</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="basic-pass">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">Basic Pass <span class="custom-badge badge-completed">Ukończone</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="dip-pass">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">Dip Pass <span class="custom-badge badge-completed">Ukończone</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="simple-combo">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">Simple Combo <span class="custom-badge badge-completed">Ukończone</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="neck-wrap">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">Neck Wrap <span class="custom-badge badge-in-progress">W trakcie</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 80%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <div class="category-header">
+                                Średnio zaawansowane umiejętności
+                                <span class="category-progress">1/5</span>
+                            </div>
+                            <div class="skill-list">
+                                <div class="skill-item" data-skill-id="high-low-whip">
+                                    <input type="checkbox" class="skill-checkbox" checked>
+                                    <div class="skill-info">
+                                        <div class="skill-name">High/Low Whip <span class="custom-badge badge-completed">Ukończone</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="two-hand-spin">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">2 Hand Spin <span class="custom-badge badge-in-progress">W trakcie</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 45%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="backhand-flip">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">Backhand Flip <span class="custom-badge badge-new">Nowy</span></div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 15%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <div class="category-header">
+                                Zaawansowane umiejętności
+                                <span class="category-progress">0/5</span>
+                            </div>
+                            <div class="skill-list">
+                                <div class="skill-item" data-skill-id="handrolls">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">Handrolls (Windshield Wiper)</div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item" data-skill-id="elbow-rolls">
+                                    <input type="checkbox" class="skill-checkbox">
+                                    <div class="skill-info">
+                                        <div class="skill-name">Elbow Rolls</div>
+                                        <div class="skill-difficulty">
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                            <span class="skill-star filled">★</span>
+                                        </div>
+                                        <div class="skill-progress">
+                                            <div class="skill-progress-value" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Badges Page -->
+                <div id="badgesPage" class="page-content">
+                    <h1 class="page-title">Zdobyte odznaki</h1>
+                    
+                    <div class="badges-grid">
+                        <div class="badge-card">
+                            <div class="badge-icon" style="background-color: #3498db;">🔰</div>
+                            <div class="badge-title">Pierwsze kroki</div>
+                            <div class="badge-description">Rozpoczęto naukę Freestyle Staff</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon" style="background-color: #2ecc71;">🌊</div>
+                            <div class="badge-title">Mistrz Basic Flow</div>
+                            <div class="badge-description">Opanowano Basic Flow</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon" style="background-color: #e74c3c;">🔄</div>
+                            <div class="badge-title">Smooth Operator</div>
+                            <div class="badge-description">Wykonano 100 powtórzeń Basic Flow</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">1000 Powtórzeń</div>
+                            <div class="badge-description">Wykonano 1000 powtórzeń jednej umiejętności</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Combo Master</div>
+                            <div class="badge-description">Opanowano wszystkie kombinacje dla początkujących</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Warp Speed</div>
+                            <div class="badge-description">Wykonano 50 powtórzeń w minutę</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Roll With It</div>
+                            <div class="badge-description">Opanowano podstawowe rolki</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">High Flyer</div>
+                            <div class="badge-description">Wykonano pierwszy Thumbflip</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Safe Hands</div>
+                            <div class="badge-description">Złapano 10 rzutów z rzędu</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Persistent</div>
+                            <div class="badge-description">Ćwiczono codziennie przez 7 dni</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Dedicated</div>
+                            <div class="badge-description">Ćwiczono codziennie przez 30 dni</div>
+                        </div>
+                        
+                        <div class="badge-card">
+                            <div class="badge-icon badge-locked"></div>
+                            <div class="badge-title">Improviser</div>
+                            <div class="badge-description">Stworzono własne combo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Library Page -->
+                <div id="libraryPage" class="page-content">
+                    <h1 class="page-title">Biblioteka materiałów</h1>
+                    
+                    <div class="skills-container">
+                        <div class="file-explorer">
+                            <div class="file-explorer-header">
+                                Freestyle Staff Academy - Pliki szkoleniowe
+                            </div>
+                            <div class="file-explorer-body">
+                                <ul class="file-list">
+                                    <li class="file-folder">
+                                        <div class="file-folder-header">
+                                            <span class="file-folder-icon">▶</span>
+                                            <span class="file-folder-name">1. START HERE</span>
+                                        </div>
+                                        <ul class="file-folder-content">
+                                            <li class="file-item file-md" data-file-path="freestyle-staff-academy/1. START HERE/How to Succeed at Staff Spinning.md">
+                                                <span class="file-item-icon">📄</span>
+                                                <span class="file-item-name">How to Succeed at Staff Spinning</span>
+                                            </li>
+                                            <li class="file-item file-mp4" data-file-path="freestyle-staff-academy/1. START HERE/key-to-success.mp4">
+                                                <span class="file-item-icon">🎬</span>
+                                                <span class="file-item-name">key-to-success</span>
+                                            </li>
+                                            <li class="file-item file-md" data-file-path="freestyle-staff-academy/1. START HERE/Keys To Success.md">
+                                                <span class="file-item-icon">📄</span>
+                                                <span class="file-item-name">Keys To Success</span>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="file-folder">
+                                        <div class="file-folder-header">
+                                            <span class="file-folder-icon">▶</span>
+                                            <span class="file-folder-name">2. DOWNLOADS</span>
+                                        </div>
+                                        <ul class="file-folder-content">
+                                            <li class="file-folder">
+                                                <div class="file-folder-header">
+                                                    <span class="file-folder-icon">▶</span>
+                                                    <span class="file-folder-name">e-book</span>
+                                                </div>
+                                                <ul class="file-folder-content">
+                                                    <li class="file-item file-md" data-file-path="freestyle-staff-academy/2. DOWNLOADS/e-book/1000-reps-do-mistrzostwa.md">
+                                                        <span class="file-item-icon">📄</span>
+                                                        <span class="file-item-name">1000-reps-do-mistrzostwa</span>
+                                                    </li>
+                                                    <li class="file-item file-pdf" data-file-path="freestyle-staff-academy/2. DOWNLOADS/e-book/1000-reps-to-mastery.pdf">
+                                                        <span class="file-item-icon">📑</span>
+                                                        <span class="file-item-name">1000-reps-to-mastery.pdf</span>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li class="file-item file-pdf" data-file-path="freestyle-staff-academy/2. DOWNLOADS/FSA_Rep_Tracker.pdf">
+                                                <span class="file-item-icon">📑</span>
+                                                <span class="file-item-name">FSA_Rep_Tracker.pdf</span>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="file-folder">
+                                        <div class="file-folder-header">
+                                            <span class="file-folder-icon">▶</span>
+                                            <span class="file-folder-name">5. BEGINNER</span>
+                                        </div>
+                                        <ul class="file-folder-content">
+                                            <li class="file-folder">
+                                                <div class="file-folder-header">
+                                                    <span class="file-folder-icon">▶</span>
+                                                    <span class="file-folder-name">1. Basic Flow</span>
+                                                </div>
+                                                <ul class="file-folder-content">
+                                                    <li class="file-item file-mp4" data-file-path="freestyle-staff-academy/5. BEGINNER/1. Basic Flow/Basic Flow.mp4">
+                                                        <span class="file-item-icon">🎬</span>
+                                                        <span class="file-item-name">Basic Flow</span>
+                                                    </li>
+                                                    <li class="file-item file-md" data-file-path="freestyle-staff-academy/5. BEGINNER/1. Basic Flow/Full Basic Flow.md">
+                                                        <span class="file-item-icon">📄</span>
+                                                        <span class="file-item-name">Full Basic Flow</span>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Resource Viewer -->
+                        <div id="resourceViewer" class="resource-viewer" style="display: none;">
+                            <div class="resource-viewer-header">
+                                <h3 class="resource-viewer-title">Tytuł zasobu</h3>
+                                <button class="btn btn-outline" id="closeResourceBtn">Zamknij</button>
+                            </div>
+                            
+                            <div class="resource-viewer-content">
+                                <!-- Content will be loaded here -->
+                            </div>
+                            
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" id="addToTrainingBtn">Dodaj do treningu</button>
+                                <button class="btn btn-secondary" id="trackRepsBtn">Śledź powtórzenia</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Page -->
+                <div id="progressPage" class="page-content">
+                    <h1 class="page-title">Mój postęp</h1>
+                    
+                    <div class="dashboard-card mb-4">
+                        <h3>Podsumowanie postępu</h3>
+                        <canvas id="progressChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="skills-container">
+                        <div class="skill-category">
+                            <div class="category-header">
+                                Twój dziennik treningowy
+                            </div>
+                            <div class="skill-list" style="padding: 1.5rem;">
+                                <h4 class="mb-2">Aktualny cel:</h4>
+                                <p class="mb-3">Opanować High/Low Whip i wykonać 1000 powtórzeń Basic Flow</p>
+                                
+                                <h4 class="mb-2">Dzisiejszy plan:</h4>
+                                <ul class="mb-3">
+                                    <li>50x Basic Flow (obie ręce)</li>
+                                    <li>25x High/Low Whip</li>
+                                    <li>20x Neck Wrap</li>
+                                </ul>
+                                
+                                <h4 class="mb-2">Dodaj dzisiejsze ćwiczenia:</h4>
+                                <div class="form-group">
+                                    <label for="trainingDate" class="form-label">Data treningu:</label>
+                                    <input type="date" id="trainingDate" class="form-control" value="2025-04-18">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="trainingSkill" class="form-label">Ćwiczona umiejętność:</label>
+                                    <select id="trainingSkill" class="form-control">
+                                        <option value="">Wybierz umiejętność</option>
+                                        <option value="basic-flow">Basic Flow</option>
+                                        <option value="basic-pass">Basic Pass</option>
+                                        <option value="dip-pass">Dip Pass</option>
+                                        <option value="simple-combo">Simple Combo</option>
+                                        <option value="neck-wrap">Neck Wrap</option>
+                                        <option value="high-low-whip">High/Low Whip</option>
+                                        <option value="two-hand-spin">2 Hand Spin</option>
+                                        <option value="backhand-flip">Backhand Flip</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="trainingReps" class="form-label">Liczba powtórzeń:</label>
+                                    <input type="number" id="trainingReps" class="form-control" min="1" value="10">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="trainingNotes" class="form-label">Notatki:</label>
+                                    <textarea id="trainingNotes" class="form-control" rows="3" placeholder="Jak poszło dzisiejsze ćwiczenie?"></textarea>
+                                </div>
+                                
+                                <button id="addTrainingBtn" class="btn btn-primary">Dodaj trening</button>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <div class="category-header">
+                                Historia treningów
+                            </div>
+                            <div id="trainingHistory" class="skill-list" style="padding: 1.5rem;">
+                                <div class="training-entry">
+                                    <div class="training-date">2025-04-17</div>
+                                    <div class="training-skill">Basic Flow</div>
+                                    <div class="training-reps">100 powtórzeń</div>
+                                    <div class="training-notes">Świetna sesja! Czuję coraz większą płynność. Jutro spróbuję zwiększyć tempo.</div>
+                                </div>
+                                
+                                <div class="training-entry">
+                                    <div class="training-date">2025-04-16</div>
+                                    <div class="training-skill">Neck Wrap</div>
+                                    <div class="training-reps">50 powtórzeń</div>
+                                    <div class="training-notes">Na początku było trudno, ale po 20 powtórzeniach zaczęło iść lepiej!</div>
+                                </div>
+                                
+                                <div class="training-entry">
+                                    <div class="training-date">2025-04-15</div>
+                                    <div class="training-skill">High/Low Whip</div>
+                                    <div class="training-reps">30 powtórzeń</div>
+                                    <div class="training-notes">Jeszcze nie do końca płynnie, ale robię postępy.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>Freestyle Staff Academy - Tracker Postępów dla Muszki</p>
+                <p>Stworzono z <span class="footer-heart">❤</span> przez Żuczka</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Skill Detail Modal -->
+    <div class="modal-backdrop" id="skillDetailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Szczegóły umiejętności</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="skill-details-difficulty">
+                    <strong>Poziom trudności:</strong>
+                    <span class="skill-star filled">★</span>
+                    <span class="skill-star filled">★</span>
+                    <span class="skill-star">★</span>
+                    <span class="skill-star">★</span>
+                    <span class="skill-star">★</span>
+                </div>
+                
+                <div class="skill-details-description">
+                    Ładowanie opisu...
+                </div>
+                
+                <div class="skill-video-container">
+                    <video controls>
+                        <source src="" type="video/mp4">
+                        Twoja przeglądarka nie obsługuje odtwarzania wideo.
+                    </video>
+                </div>
+                
+                <div class="skill-tips">
+                    <h4>Wskazówki:</h4>
+                    <ul>
+                        <li>Zacznij powoli, skupiając się na poprawnej technice.</li>
+                        <li>Utrzymuj równowagę i kontrolę nad staffem.</li>
+                        <li>Pamiętaj o odpowiednim ułożeniu rąk.</li>
+                        <li>Ćwicz obie strony dla lepszej koordynacji.</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-rep-tracker">
+                    <h4>Licznik powtórzeń (cel: 1000)</h4>
+                    <div class="rep-progress">
+                        <div class="rep-progress-value" style="width: 25%;"></div>
+                    </div>
+                    <div class="rep-input-container">
+                        <input type="number" class="rep-input" placeholder="Liczba powtórzeń" min="1" value="10">
+                        <button class="btn btn-primary" id="addRepsBtn">Dodaj</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeSkillModal">Zamknij</button>
+                <button class="btn btn-success" id="markCompletedBtn">Oznacz jako opanowane</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Congrats Modal -->
+    <div class="modal-backdrop" id="congratsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Gratulacje!</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body congrats-modal">
+                <div class="badge-unlocked">🏆</div>
+                <h2 class="congrats-title">Zdobyłaś nową odznakę!</h2>
+                <p class="congrats-text">Właśnie odblokowałaś odznakę "Smooth Operator" za wykonanie 100 powtórzeń Basic Flow! Tak trzymaj!</p>
+                <div class="congrats-icon">🎉</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeCongratsModal">Super!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/chart-config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
