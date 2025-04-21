@@ -93,7 +93,10 @@
                 <li v-for="video in selectedSkill.videos" :key="video.id" class="video-item">
                   <div class="video-card" @click="playVideo(video)">
                     <div class="video-thumbnail">
-                      <img :src="'/images/academy/video-thumbnail.webp'" alt="Thumbnail" />
+                      <!-- Używamy placeholder zamiast próby ładowania obrazów, które mogą nie istnieć -->
+                      <div class="video-placeholder" :style="{ backgroundColor: getCategoryColor(selectedSkill.category) + '80' }">
+                        <span class="video-icon">🎬</span>
+                      </div>
                       <div class="play-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
@@ -180,11 +183,48 @@
           </button>
         </div>
       </div>
+  
+      <!-- Video Player Modal -->
+      <div v-if="activeVideo" class="video-modal" @click.self="closeVideoPlayer">
+        <div class="video-modal-content">
+          <button class="close-button" @click="closeVideoPlayer">&times;</button>
+          <h3 class="video-title">{{ activeVideo.title }}</h3>
+          <div class="video-player-container">
+            <div class="video-placeholder-large">
+              <span class="video-message">Wideo jest niedostępne</span>
+              <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Modal z gratulacjami -->
+      <div class="modal-backdrop" id="congratsModal" v-if="unlockedBadge" style="display: flex;">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 class="modal-title">Gratulacje!</h3>
+            <button class="modal-close" @click="hideCongratsModal">&times;</button>
+          </div>
+          <div class="modal-body congrats-modal">
+            <div class="badge-unlocked" :style="{ backgroundColor: unlockedBadge.color }">
+              {{ unlockedBadge.icon }}
+            </div>
+            <h2 class="congrats-title">Zdobyłaś nową odznakę!</h2>
+            <p class="congrats-text">
+              Właśnie odblokowałaś odznakę "{{ unlockedBadge.name }}" - {{ unlockedBadge.description }}! Tak trzymaj!
+            </p>
+            <div class="congrats-icon">🎉</div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" @click="hideCongratsModal">Super!</button>
+          </div>
+        </div>
+      </div>
     </div>
   </template>
   
   <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import DataService from '@/services/DataService';
   import { showToast } from '@/services/ToastService';
@@ -208,6 +248,15 @@
     goalReps: number;
   }
   
+  interface Badge {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    color: string;
+    unlocked: boolean;
+  }
+  
   const router = useRouter();
   const userData = ref(DataService.getUserData());
   const categories = ref(DataService.getCategories());
@@ -216,6 +265,8 @@
   const selectedSkillId = ref<string | null>(null);
   const learningList = ref<string[]>(JSON.parse(localStorage.getItem('learningList') || '[]'));
   const repsToAdd = ref(10);
+  const activeVideo = ref<Video | null>(null);
+  const unlockedBadge = ref<Badge | null>(null);
   
   // Katalog wszystkich umiejętności
   const allSkills = ref<Skill[]>([
@@ -608,6 +659,9 @@
     if (index === -1) {
       learningList.value.push(skillId);
       showToast(`Dodano "${getSkillById(skillId).name}" do listy nauki`);
+      
+      // Dodaj do systemu śledzenia w DataService, jeśli nie istnieje
+      ensureSkillExists(skillId);
     } else {
       learningList.value.splice(index, 1);
       showToast(`Usunięto "${getSkillById(skillId).name}" z listy nauki`);
@@ -651,19 +705,19 @@
       return;
     }
     
-    // Tutaj możesz dodać logikę przejścia do widoku nauki
-    // Na razie tylko powiadomienie
-    showToast('Rozpoczęto sesję nauki! Ta funkcja będzie dostępna wkrótce.');
-    
-    // Przykładowe przekierowanie (możesz to zmienić)
-    // router.push('/learn');
+    // Przekieruj do SkillsView
+    router.push('/skills');
+    showToast('Rozpoczęto sesję nauki! Wszystkie umiejętności zostały dodane do trackera.');
   };
   
-  // Odtwórz wideo
+  // Odtwórz wideo (pokaż odtwarzacz)
   const playVideo = (video: Video) => {
-    // Tutaj możesz dodać logikę odtwarzania wideo
-    // Na razie tylko powiadomienie
-    showToast(`Odtwarzanie: ${video.title}`);
+    activeVideo.value = video;
+  };
+  
+  // Zamknij odtwarzacz wideo
+  const closeVideoPlayer = () => {
+    activeVideo.value = null;
   };
   
   // Pobierz postęp umiejętności
@@ -690,16 +744,81 @@
       return;
     }
     
+    // Upewnij się, że umiejętność istnieje w systemie śledzenia
+    ensureSkillExists(skillId);
+    
+    // Dodaj powtórzenia
     const success = DataService.addReps(skillId, reps);
     
     if (success) {
       userData.value = DataService.getUserData();
+      
+      // Sprawdź czy odblokowano odznakę
+      const skill = userData.value.skills[skillId];
+      if (skill && skill.status === 'completed') {
+        const badge = userData.value.badges.find((b: Badge) => b.unlocked && (
+          (b.id === 'basic-flow-master' && skillId === 'basic-flow') ||
+          (b.id === '1000-reps' && skill.reps >= 1000) ||
+          (b.id === 'smooth-operator' && skillId === 'basic-flow' && skill.reps >= 100)
+        ));
+        
+        if (badge) {
+          unlockedBadge.value = badge;
+        }
+      }
+      
       showToast(`Dodano ${reps} powtórzeń!`);
       repsToAdd.value = 10;
     } else {
       showToast('Nie udało się dodać powtórzeń', 'error');
     }
   };
+  
+  // Ukryj modal z gratulacjami
+  const hideCongratsModal = () => {
+    unlockedBadge.value = null;
+  };
+  
+  // Upewnij się, że umiejętność istnieje w systemie śledzenia
+  const ensureSkillExists = (skillId: string) => {
+    const skill = userData.value.skills[skillId];
+    if (!skill) {
+      const skillInfo = getSkillById(skillId);
+      if (skillInfo.id) {
+        // Dodaj umiejętność do systemu śledzenia
+        userData.value.skills[skillId] = {
+          name: skillInfo.name,
+          category: skillInfo.category,
+          difficulty: skillInfo.difficulty,
+          progress: 0,
+          status: 'new',
+          reps: 0,
+          goalReps: skillInfo.goalReps
+        };
+        DataService.saveUserData(userData.value);
+      }
+    }
+  };
+  
+  // Aktualizuj dane użytkownika i synchronizuj listę nauki przy zmianie userData
+  watch(() => userData.value, () => {
+    // Sprawdź, czy jakaś umiejętność z listy nauki została ukończona
+    const completedSkills = learningList.value.filter(skillId => {
+      const skill = userData.value.skills[skillId];
+      return skill && skill.status === 'completed';
+    });
+    
+    // Usuń ukończone umiejętności z listy nauki
+    if (completedSkills.length > 0) {
+      completedSkills.forEach(skillId => {
+        const index = learningList.value.indexOf(skillId);
+        if (index !== -1) {
+          learningList.value.splice(index, 1);
+        }
+      });
+      saveLearningList();
+    }
+  }, { deep: true });
   
   // Inicjalizacja komponentu
   onMounted(() => {
@@ -714,6 +833,11 @@
     if (savedList) {
       learningList.value = JSON.parse(savedList);
     }
+    
+    // Upewnij się, że wszystkie umiejętności z listy nauki istnieją w systemie śledzenia
+    learningList.value.forEach(skillId => {
+      ensureSkillExists(skillId);
+    });
   });
   </script>
   
@@ -988,13 +1112,22 @@
     height: 0;
   }
   
-  .video-thumbnail img {
+  .video-placeholder {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+  }
+  
+  .video-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
   }
   
   .play-button {
@@ -1155,6 +1288,68 @@
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+  }
+  
+  /* Video Player Modal */
+  .video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    padding: 20px;
+  }
+  
+  .video-modal-content {
+    background-color: #000;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    color: white;
+  }
+  
+  .video-title {
+    padding: 15px;
+    margin: 0;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .video-player-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+  }
+  
+  .video-placeholder-large {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #222;
+  }
+  
+  .video-message {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .video-submessage {
+    font-size: 1rem;
+    opacity: 0.7;
   }
   
   @media (max-width: 768px) {

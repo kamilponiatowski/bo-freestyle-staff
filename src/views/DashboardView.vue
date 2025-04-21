@@ -8,14 +8,8 @@
         <div class="progress-ring">
           <svg>
             <circle class="progress-ring-circle progress-ring-bg" cx="60" cy="60" r="52" />
-            <circle 
-              class="progress-ring-circle progress-ring-value" 
-              cx="60" 
-              cy="60" 
-              r="52"
-              :stroke-dasharray="circumference" 
-              :stroke-dashoffset="dashOffset" 
-            />
+            <circle class="progress-ring-circle progress-ring-value" cx="60" cy="60" r="52"
+              :stroke-dasharray="circumference" :stroke-dashoffset="dashOffset" />
           </svg>
           <div class="progress-ring-text">
             <div class="progress-ring-percentage">{{ Math.round(totalProgress) }}%</div>
@@ -42,11 +36,7 @@
       <!-- Ostatnie odznaki -->
       <div class="dashboard-card">
         <h3>Ostatnie odznaki</h3>
-        <div 
-          v-for="badge in recentBadges" 
-          :key="badge.id" 
-          class="progress-container"
-        >
+        <div v-for="badge in recentBadges" :key="badge.id" class="progress-container">
           <div class="progress-label">
             <span class="progress-title">{{ badge.name }}</span>
             <span class="progress-percentage">{{ badge.unlocked ? 'Zdobyta!' : '0%' }}</span>
@@ -64,7 +54,8 @@
       <h3>Plan treningowy na dziś</h3>
       <ul class="mb-3">
         <li v-for="(skill, index) in recommendedSkills" :key="skill.id">
-          {{ skill.name }}: {{ recommendedReps[index] }} powtórzeń{{ skill.category === 'beginner' ? ' (obie ręce)' : '' }}
+          {{ skill.name }}: {{ recommendedReps[index] }} powtórzeń{{ skill.category === 'beginner' ? ' (obie ręce)' : ''
+          }}
         </li>
         <li v-if="recommendedSkills.length === 0">
           Brak umiejętności do treningu. Zacznij od Basic Flow!
@@ -81,46 +72,26 @@
           Tricki do opanowania
         </div>
         <div class="skill-list">
-          <div 
-            v-for="skill in recommendedSkills" 
-            :key="skill.id"
-            class="skill-item" 
-            :data-skill-id="skill.id"
-            @click="showSkillDetail(skill.id)"
-          >
-            <input 
-              type="checkbox" 
-              class="skill-checkbox"
-              :checked="skill.status === 'completed'"
-              @click.stop
-            >
+          <div v-for="skill in recommendedSkills" :key="skill.id" class="skill-item" :data-skill-id="skill.id"
+            @click="showSkillDetail(skill.id)">
+            <input type="checkbox" class="skill-checkbox" :checked="skill.status === 'completed'" @click.stop>
             <div class="skill-info">
               <div class="skill-name">
-                {{ skill.name }} 
-                <span 
-                  class="custom-badge" 
-                  :class="{
-                    'badge-new': skill.status === 'new',
-                    'badge-in-progress': skill.status === 'in-progress',
-                    'badge-completed': skill.status === 'completed'
-                  }"
-                >
+                {{ skill.name }}
+                <span class="custom-badge" :class="{
+                  'badge-new': skill.status === 'new',
+                  'badge-in-progress': skill.status === 'in-progress',
+                  'badge-completed': skill.status === 'completed'
+                }">
                   {{ getStatusText(skill.status) }}
                 </span>
               </div>
               <div class="skill-difficulty">
-                <span 
-                  v-for="star in 5" 
-                  :key="star" 
-                  class="skill-star"
-                  :class="{ 'filled': star <= skill.difficulty }"
-                >★</span>
+                <span v-for="star in 5" :key="star" class="skill-star"
+                  :class="{ 'filled': star <= skill.difficulty }">★</span>
               </div>
               <div class="skill-progress">
-                <div 
-                  class="skill-progress-value" 
-                  :style="{ width: getProgressPercentage(skill) + '%' }"
-                ></div>
+                <div class="skill-progress-value" :style="{ width: getProgressPercentage(skill) + '%' }"></div>
               </div>
             </div>
           </div>
@@ -138,12 +109,8 @@
         <div class="modal-body">
           <div class="skill-details-difficulty">
             <strong>Poziom trudności:</strong>
-            <span 
-              v-for="star in 5" 
-              :key="star" 
-              class="skill-star"
-              :class="{ 'filled': star <= activeSkillDetails.difficulty }"
-            >★</span>
+            <span v-for="star in 5" :key="star" class="skill-star"
+              :class="{ 'filled': star <= activeSkillDetails.difficulty }">★</span>
           </div>
 
           <div class="skill-details-description">
@@ -151,10 +118,10 @@
           </div>
 
           <div class="skill-video-container" v-if="activeSkillDetails.videoPath">
-            <video controls>
-              <source :src="activeSkillDetails.videoPath" type="video/mp4">
-              Twoja przeglądarka nie obsługuje odtwarzania wideo.
-            </video>
+            <div class="video-placeholder">
+              <span class="video-message">Wideo jest niedostępne</span>
+              <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
+            </div>
           </div>
 
           <div class="skill-tips">
@@ -167,19 +134,10 @@
           <div class="skill-rep-tracker">
             <h4>Licznik powtórzeń ({{ activeSkillDetails.reps }}/{{ activeSkillDetails.goalReps }})</h4>
             <div class="rep-progress">
-              <div 
-                class="rep-progress-value" 
-                :style="{ width: getProgressPercentage(activeSkillDetails) + '%' }"
-              ></div>
+              <div class="rep-progress-value" :style="{ width: getProgressPercentage(activeSkillDetails) + '%' }"></div>
             </div>
             <div class="rep-input-container">
-              <input 
-                type="number" 
-                class="rep-input" 
-                placeholder="Liczba powtórzeń" 
-                min="1" 
-                v-model="repCount"
-              >
+              <input type="number" class="rep-input" placeholder="Liczba powtórzeń" min="1" v-model="repCount">
               <button class="btn btn-primary" @click="addReps">Dodaj</button>
             </div>
           </div>
@@ -223,11 +181,11 @@ import DataService from '@/services/DataService';
 import { showToast } from '@/services/ToastService';
 
 // Importujemy typy
-import type { 
-  UserData, 
-  Skill, 
-  Badge, 
-  SkillDetails 
+import type {
+  UserData,
+  Skill,
+  Badge,
+  SkillDetails
 } from '@/types/data-service';
 
 interface SkillWithId extends Skill {
@@ -245,15 +203,15 @@ const unlockedBadge = ref<Badge | null>(null);
 const totalProgress = computed((): number => {
   const skills = Object.values(userData.value.skills);
   if (skills.length === 0) return 0;
-  
+
   let completedReps = 0;
   let totalGoal = 0;
-  
+
   skills.forEach(skill => {
     completedReps += skill.reps || 0;
     totalGoal += skill.goalReps || 1000;
   });
-  
+
   return (completedReps / totalGoal) * 100;
 });
 
@@ -334,23 +292,23 @@ const hideSkillDetail = (): void => {
 // Dodaj powtórzenia
 const addReps = (): void => {
   if (!activeSkill.value) return;
-  
+
   const reps = parseInt(repCount.value.toString());
   if (!reps || reps < 1) {
     showToast('Wprowadź poprawną liczbę powtórzeń', 'error');
     return;
   }
-  
+
   // Dodaj powtórzenia
   const success = DataService.addReps(activeSkill.value, reps);
-  
+
   if (success) {
     // Zaktualizuj dane użytkownika
     userData.value = DataService.getUserData();
-    
+
     // Sprawdź, czy umiejętność została ukończona
     const skill = userData.value.skills[activeSkill.value];
-    
+
     if (skill.status === 'completed') {
       // Znajdź odznakę, która mogła zostać odblokowana
       const badge = userData.value.badges.find(b => b.unlocked && (
@@ -358,18 +316,18 @@ const addReps = (): void => {
         (b.id === '1000-reps' && skill.reps >= 1000) ||
         (b.id === 'smooth-operator' && activeSkill.value === 'basic-flow' && skill.reps >= 100)
       ));
-      
+
       if (badge) {
         unlockedBadge.value = badge;
       }
-      
+
       hideSkillDetail();
     } else {
       // Aktualizuj UI modalu
       activeSkillDetails.value = DataService.getSkillDetails(activeSkill.value);
       // Reset input
       repCount.value = 10;
-      
+
       showToast(`Dodano ${reps} powtórzeń!`);
     }
   } else {
@@ -380,24 +338,24 @@ const addReps = (): void => {
 // Oznacz umiejętność jako ukończoną
 const markSkillCompleted = (): void => {
   if (!activeSkill.value) return;
-  
+
   // Oznacz umiejętność jako ukończoną
   const success = DataService.markSkillAsCompleted(activeSkill.value);
-  
+
   if (success) {
     // Zaktualizuj dane użytkownika
     userData.value = DataService.getUserData();
-    
+
     // Znajdź odznakę, która mogła zostać odblokowana
     const badge = userData.value.badges.find(b => b.unlocked && (
       (b.id === 'basic-flow-master' && activeSkill.value === 'basic-flow') ||
       (b.id === '1000-reps')
     ));
-    
+
     if (badge) {
       unlockedBadge.value = badge;
     }
-    
+
     hideSkillDetail();
     showToast('Umiejętność została oznaczona jako opanowana!');
   } else {

@@ -2,6 +2,58 @@
   <div>
     <h1 class="page-title">Tricki i umiejętności</h1>
 
+    <!-- Zakładka z listą do nauki -->
+    <div v-if="learningList.length > 0" class="dashboard-card mb-4">
+      <h3>Twoja lista do nauki</h3>
+      <div class="learning-skills-grid">
+        <div 
+          v-for="skillId in learningList" 
+          :key="skillId"
+          class="skill-item" 
+          @click="showSkillDetail(skillId)"
+        >
+          <input 
+            type="checkbox" 
+            class="skill-checkbox"
+            :checked="isSkillCompleted(skillId)"
+            @click.stop
+          >
+          <div class="skill-info">
+            <div class="skill-name">
+              {{ getSkillName(skillId) }} 
+              <span 
+                class="custom-badge" 
+                :class="{
+                  'badge-new': isSkillNew(skillId),
+                  'badge-in-progress': isSkillInProgress(skillId),
+                  'badge-completed': isSkillCompleted(skillId)
+                }"
+              >
+                {{ getStatusText(getSkillStatus(skillId)) }}
+              </span>
+            </div>
+            <div class="skill-difficulty">
+              <span 
+                v-for="star in 5" 
+                :key="star" 
+                class="skill-star"
+                :class="{ 'filled': star <= getSkillDifficulty(skillId) }"
+              >★</span>
+            </div>
+            <div class="skill-progress">
+              <div 
+                class="skill-progress-value" 
+                :style="{ width: getProgressPercentage(skillId) + '%' }"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="learning-list-actions">
+        <button class="btn btn-primary" @click="clearLearningList">Wyczyść listę nauki</button>
+      </div>
+    </div>
+
     <div class="skills-container">
       <div 
         v-for="category in categories" 
@@ -20,6 +72,7 @@
             :key="skill.id"
             class="skill-item" 
             :data-skill-id="skill.id"
+            :class="{ 'learning-item': isInLearningList(skill.id) }"
             @click="showSkillDetail(skill.id)"
           >
             <input 
@@ -41,6 +94,7 @@
                 >
                   {{ getStatusText(skill.status) }}
                 </span>
+                <span v-if="isInLearningList(skill.id)" class="custom-badge badge-learning">Do nauki</span>
               </div>
               <div class="skill-difficulty">
                 <span 
@@ -85,10 +139,10 @@
           </div>
 
           <div class="skill-video-container" v-if="activeSkillDetails.videoPath">
-            <video controls>
-              <source :src="activeSkillDetails.videoPath" type="video/mp4">
-              Twoja przeglądarka nie obsługuje odtwarzania wideo.
-            </video>
+            <div class="video-placeholder">
+              <span class="video-message">Wideo jest niedostępne</span>
+              <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
+            </div>
           </div>
 
           <div class="skill-tips">
@@ -119,6 +173,13 @@
           </div>
         </div>
         <div class="modal-footer">
+          <button 
+            class="btn" 
+            :class="isInLearningList(activeSkill) ? 'btn-outline-danger' : 'btn-outline-primary'"
+            @click="toggleLearningList(activeSkill)"
+          >
+            {{ isInLearningList(activeSkill) ? 'Usuń z listy nauki' : 'Dodaj do listy nauki' }}
+          </button>
           <button class="btn btn-outline" @click="hideSkillDetail">Zamknij</button>
           <button class="btn btn-success" @click="markSkillCompleted">Oznacz jako opanowane</button>
         </div>
@@ -151,8 +212,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import DataService from '@/services/DataService';
+import LearningListService from '@/services/LearningListService';
 import { showToast } from '@/services/ToastService';
 import type { UserData, Skill, Badge, SkillDetails, Category } from '@/types/data-service';
 
@@ -166,6 +228,13 @@ const activeSkill = ref<string | null>(null);
 const activeSkillDetails = ref<SkillDetails>({} as SkillDetails);
 const repCount = ref<number>(10);
 const unlockedBadge = ref<Badge | null>(null);
+const learningList = ref<string[]>(LearningListService.getLearningList());
+
+// Obserwuj zmiany listy nauki
+watch(() => learningList.value, () => {
+  // Przy każdej zmianie listy nauki zapisz ją
+  LearningListService.saveLearningList(learningList.value);
+}, { deep: true });
 
 // Pobierz umiejętności według kategorii
 const getSkillsByCategory = (categoryId: string): SkillWithId[] => {
@@ -194,8 +263,68 @@ const getStatusText = (status: string): string => {
 };
 
 // Pobierz procent postępu dla umiejętności
-const getProgressPercentage = (skill: Skill): number => {
+const getProgressPercentage = (skill: Skill | string): number => {
+  if (typeof skill === 'string') {
+    // Jeśli przekazano ID umiejętności
+    const skillObj = userData.value.skills[skill];
+    if (!skillObj) return 0;
+    return Math.min(100, (skillObj.reps / skillObj.goalReps) * 100);
+  }
+  
+  // Jeśli przekazano obiekt umiejętności
   return Math.min(100, (skill.reps / skill.goalReps) * 100);
+};
+
+// Funkcje pomocnicze dla listy nauki
+const getSkillName = (skillId: string): string => {
+  const skill = userData.value.skills[skillId];
+  return skill ? skill.name : skillId;
+};
+
+const getSkillDifficulty = (skillId: string): number => {
+  const skill = userData.value.skills[skillId];
+  return skill ? skill.difficulty : 3;
+};
+
+const getSkillStatus = (skillId: string): string => {
+  const skill = userData.value.skills[skillId];
+  return skill ? skill.status : 'new';
+};
+
+const isSkillNew = (skillId: string): boolean => {
+  return getSkillStatus(skillId) === 'new';
+};
+
+const isSkillInProgress = (skillId: string): boolean => {
+  return getSkillStatus(skillId) === 'in-progress';
+};
+
+const isSkillCompleted = (skillId: string): boolean => {
+  return getSkillStatus(skillId) === 'completed';
+};
+
+// Sprawdź, czy umiejętność jest na liście nauki
+const isInLearningList = (skillId: string): boolean => {
+  return learningList.value.includes(skillId);
+};
+
+// Dodaj/usuń z listy nauki
+const toggleLearningList = (skillId: string): void => {
+  if (isInLearningList(skillId)) {
+    learningList.value = learningList.value.filter(id => id !== skillId);
+    showToast(`Usunięto "${getSkillName(skillId)}" z listy nauki`);
+  } else {
+    learningList.value.push(skillId);
+    showToast(`Dodano "${getSkillName(skillId)}" do listy nauki`);
+  }
+};
+
+// Wyczyść listę nauki
+const clearLearningList = (): void => {
+  if (confirm('Czy na pewno chcesz wyczyścić całą listę nauki?')) {
+    learningList.value = [];
+    showToast('Lista nauki została wyczyszczona');
+  }
 };
 
 // Pokaż szczegóły umiejętności
@@ -248,6 +377,11 @@ const addReps = (): void => {
         unlockedBadge.value = badge;
       }
       
+      // Usuń ukończoną umiejętność z listy nauki
+      if (isInLearningList(activeSkill.value)) {
+        learningList.value = learningList.value.filter(id => id !== activeSkill.value);
+      }
+      
       hideSkillDetail();
     } else {
       // Aktualizuj UI modalu
@@ -283,6 +417,11 @@ const markSkillCompleted = (): void => {
       unlockedBadge.value = badge;
     }
     
+    // Usuń ukończoną umiejętność z listy nauki
+    if (isInLearningList(activeSkill.value)) {
+      learningList.value = learningList.value.filter(id => id !== activeSkill.value);
+    }
+    
     hideSkillDetail();
     showToast('Umiejętność została oznaczona jako opanowana!');
   } else {
@@ -294,4 +433,83 @@ const markSkillCompleted = (): void => {
 const hideCongratsModal = (): void => {
   unlockedBadge.value = null;
 };
+
+// Inicjalizacja
+onMounted(() => {
+  // Pobierz listę nauki
+  learningList.value = LearningListService.getLearningList();
+});
 </script>
+
+<style scoped>
+/* Styl dla elementów oznaczonych jako "do nauki" */
+.learning-item {
+  border-left: 3px solid var(--secondary);
+  background-color: rgba(243, 156, 18, 0.05);
+}
+
+/* Lista umiejętności do nauki */
+.learning-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.learning-list-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+/* Badge dla umiejętności do nauki */
+.badge-learning {
+  background-color: var(--secondary);
+}
+
+/* Dodatkowe style dla placeholdera wideo */
+.video-placeholder {
+  width: 100%;
+  height: 300px;
+  background-color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border-radius: 8px;
+}
+
+.video-message {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.video-submessage {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+/* Dodatkowe style dla przycisku outline-danger */
+.btn-outline-danger {
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-outline-primary {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+</style>
