@@ -6,45 +6,25 @@
     <div v-if="learningList.length > 0" class="dashboard-card mb-4">
       <h3>Twoja lista do nauki</h3>
       <div class="learning-skills-grid">
-        <div 
-          v-for="skillId in learningList" 
-          :key="skillId"
-          class="skill-item" 
-          @click="showSkillDetail(skillId)"
-        >
-          <input 
-            type="checkbox" 
-            class="skill-checkbox"
-            :checked="isSkillCompleted(skillId)"
-            @click.stop
-          >
+        <div v-for="skillId in learningList" :key="skillId" class="skill-item" @click="showSkillDetail(skillId)">
+          <input type="checkbox" class="skill-checkbox" :checked="isSkillCompleted(skillId)" @click.stop>
           <div class="skill-info">
             <div class="skill-name">
-              {{ getSkillName(skillId) }} 
-              <span 
-                class="custom-badge" 
-                :class="{
-                  'badge-new': isSkillNew(skillId),
-                  'badge-in-progress': isSkillInProgress(skillId),
-                  'badge-completed': isSkillCompleted(skillId)
-                }"
-              >
+              {{ getSkillName(skillId) }}
+              <span class="custom-badge" :class="{
+                'badge-new': isSkillNew(skillId),
+                'badge-in-progress': isSkillInProgress(skillId),
+                'badge-completed': isSkillCompleted(skillId)
+              }">
                 {{ getStatusText(getSkillStatus(skillId)) }}
               </span>
             </div>
             <div class="skill-difficulty">
-              <span 
-                v-for="star in 5" 
-                :key="star" 
-                class="skill-star"
-                :class="{ 'filled': star <= getSkillDifficulty(skillId) }"
-              >★</span>
+              <span v-for="star in 5" :key="star" class="skill-star"
+                :class="{ 'filled': star <= getSkillDifficulty(skillId) }">★</span>
             </div>
             <div class="skill-progress">
-              <div 
-                class="skill-progress-value" 
-                :style="{ width: getProgressPercentage(skillId) + '%' }"
-              ></div>
+              <div class="skill-progress-value" :style="{ width: getProgressPercentage(skillId) + '%' }"></div>
             </div>
           </div>
         </div>
@@ -55,11 +35,7 @@
     </div>
 
     <div class="skills-container">
-      <div 
-        v-for="category in categories" 
-        :key="category.id"
-        class="skill-category"
-      >
+      <div v-for="category in categories" :key="category.id" class="skill-category">
         <div class="category-header">
           {{ category.name }}
           <span class="category-progress">
@@ -67,48 +43,28 @@
           </span>
         </div>
         <div class="skill-list">
-          <div 
-            v-for="skill in getSkillsByCategory(category.id)" 
-            :key="skill.id"
-            class="skill-item" 
-            :data-skill-id="skill.id"
-            :class="{ 'learning-item': isInLearningList(skill.id) }"
-            @click="showSkillDetail(skill.id)"
-          >
-            <input 
-              type="checkbox" 
-              class="skill-checkbox"
-              :checked="skill.status === 'completed'"
-              @click.stop
-            >
+          <div v-for="skill in getSkillsByCategory(category.id)" :key="skill.id" class="skill-item"
+            :data-skill-id="skill.id" :class="{ 'learning-item': isInLearningList(skill.id) }"
+            @click="showSkillDetail(skill.id)">
+            <input type="checkbox" class="skill-checkbox" :checked="skill.status === 'completed'" @click.stop>
             <div class="skill-info">
               <div class="skill-name">
-                {{ skill.name }} 
-                <span 
-                  class="custom-badge" 
-                  :class="{
-                    'badge-new': skill.status === 'new',
-                    'badge-in-progress': skill.status === 'in-progress',
-                    'badge-completed': skill.status === 'completed'
-                  }"
-                >
+                {{ skill.name }}
+                <span class="custom-badge" :class="{
+                  'badge-new': skill.status === 'new',
+                  'badge-in-progress': skill.status === 'in-progress',
+                  'badge-completed': skill.status === 'completed'
+                }">
                   {{ getStatusText(skill.status) }}
                 </span>
                 <span v-if="isInLearningList(skill.id)" class="custom-badge badge-learning">Do nauki</span>
               </div>
               <div class="skill-difficulty">
-                <span 
-                  v-for="star in 5" 
-                  :key="star" 
-                  class="skill-star"
-                  :class="{ 'filled': star <= skill.difficulty }"
-                >★</span>
+                <span v-for="star in 5" :key="star" class="skill-star"
+                  :class="{ 'filled': star <= skill.difficulty }">★</span>
               </div>
               <div class="skill-progress">
-                <div 
-                  class="skill-progress-value" 
-                  :style="{ width: getProgressPercentage(skill) + '%' }"
-                ></div>
+                <div class="skill-progress-value" :style="{ width: getProgressPercentage(skill) + '%' }"></div>
               </div>
             </div>
           </div>
@@ -126,12 +82,8 @@
         <div class="modal-body">
           <div class="skill-details-difficulty">
             <strong>Poziom trudności:</strong>
-            <span 
-              v-for="star in 5" 
-              :key="star" 
-              class="skill-star"
-              :class="{ 'filled': star <= activeSkillDetails.difficulty }"
-            >★</span>
+            <span v-for="star in 5" :key="star" class="skill-star"
+              :class="{ 'filled': star <= activeSkillDetails.difficulty }">★</span>
           </div>
 
           <div class="skill-details-description">
@@ -139,10 +91,18 @@
           </div>
 
           <div class="skill-video-container" v-if="activeSkillDetails.videoPath">
-            <div class="video-placeholder">
-              <span class="video-message">Wideo jest niedostępne</span>
-              <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
-            </div>
+            <template v-if="skillVideoPath">
+              <video controls>
+                <source :src="skillVideoPath" type="video/mp4">
+                Twoja przeglądarka nie obsługuje odtwarzania wideo.
+              </video>
+            </template>
+            <template v-else>
+              <div class="video-placeholder">
+                <span class="video-message">Wideo jest niedostępne</span>
+                <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
+              </div>
+            </template>
           </div>
 
           <div class="skill-tips">
@@ -155,29 +115,17 @@
           <div class="skill-rep-tracker">
             <h4>Licznik powtórzeń ({{ activeSkillDetails.reps }}/{{ activeSkillDetails.goalReps }})</h4>
             <div class="rep-progress">
-              <div 
-                class="rep-progress-value" 
-                :style="{ width: getProgressPercentage(activeSkillDetails) + '%' }"
-              ></div>
+              <div class="rep-progress-value" :style="{ width: getProgressPercentage(activeSkillDetails) + '%' }"></div>
             </div>
             <div class="rep-input-container">
-              <input 
-                type="number" 
-                class="rep-input" 
-                placeholder="Liczba powtórzeń" 
-                min="1" 
-                v-model="repCount"
-              >
+              <input type="number" class="rep-input" placeholder="Liczba powtórzeń" min="1" v-model="repCount">
               <button class="btn btn-primary" @click="addReps">Dodaj</button>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button 
-            class="btn" 
-            :class="isInLearningList(activeSkill) ? 'btn-outline-danger' : 'btn-outline-primary'"
-            @click="toggleLearningList(activeSkill)"
-          >
+          <button class="btn" :class="isInLearningList(activeSkill) ? 'btn-outline-danger' : 'btn-outline-primary'"
+            @click="toggleLearningList(activeSkill)">
             {{ isInLearningList(activeSkill) ? 'Usuń z listy nauki' : 'Dodaj do listy nauki' }}
           </button>
           <button class="btn btn-outline" @click="hideSkillDetail">Zamknij</button>
@@ -216,6 +164,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import DataService from '@/services/DataService';
 import LearningListService from '@/services/LearningListService';
 import { showToast } from '@/services/ToastService';
+import { getVideoPath, getSkillVideoPath } from '@/utils/videoUtils';
 import type { UserData, Skill, Badge, SkillDetails, Category } from '@/types/data-service';
 
 interface SkillWithId extends Skill {
@@ -229,6 +178,12 @@ const activeSkillDetails = ref<SkillDetails>({} as SkillDetails);
 const repCount = ref<number>(10);
 const unlockedBadge = ref<Badge | null>(null);
 const learningList = ref<string[]>(LearningListService.getLearningList());
+
+// Oblicz ścieżkę wideo dla aktywnej umiejętności
+const skillVideoPath = computed((): string | null => {
+  if (!activeSkill.value) return null;
+  return getSkillVideoPath(activeSkill.value);
+});
 
 // Obserwuj zmiany listy nauki
 watch(() => learningList.value, () => {
@@ -270,7 +225,7 @@ const getProgressPercentage = (skill: Skill | string): number => {
     if (!skillObj) return 0;
     return Math.min(100, (skillObj.reps / skillObj.goalReps) * 100);
   }
-  
+
   // Jeśli przekazano obiekt umiejętności
   return Math.min(100, (skill.reps / skill.goalReps) * 100);
 };
@@ -348,23 +303,23 @@ const hideSkillDetail = (): void => {
 // Dodaj powtórzenia
 const addReps = (): void => {
   if (!activeSkill.value) return;
-  
+
   const reps = parseInt(repCount.value.toString());
   if (!reps || reps < 1) {
     showToast('Wprowadź poprawną liczbę powtórzeń', 'error');
     return;
   }
-  
+
   // Dodaj powtórzenia
   const success = DataService.addReps(activeSkill.value, reps);
-  
+
   if (success) {
     // Zaktualizuj dane użytkownika
     userData.value = DataService.getUserData();
-    
+
     // Sprawdź, czy umiejętność została ukończona
     const skill = userData.value.skills[activeSkill.value];
-    
+
     if (skill.status === 'completed') {
       // Znajdź odznakę, która mogła zostać odblokowana
       const badge = userData.value.badges.find(b => b.unlocked && (
@@ -372,23 +327,23 @@ const addReps = (): void => {
         (b.id === '1000-reps' && skill.reps >= 1000) ||
         (b.id === 'smooth-operator' && skill.reps >= 100 && activeSkill.value === 'basic-flow')
       ));
-      
+
       if (badge) {
         unlockedBadge.value = badge;
       }
-      
+
       // Usuń ukończoną umiejętność z listy nauki
       if (isInLearningList(activeSkill.value)) {
         learningList.value = learningList.value.filter(id => id !== activeSkill.value);
       }
-      
+
       hideSkillDetail();
     } else {
       // Aktualizuj UI modalu
       activeSkillDetails.value = DataService.getSkillDetails(activeSkill.value);
       // Reset input
       repCount.value = 10;
-      
+
       showToast(`Dodano ${reps} powtórzeń!`);
     }
   } else {
@@ -399,29 +354,29 @@ const addReps = (): void => {
 // Oznacz umiejętność jako ukończoną
 const markSkillCompleted = (): void => {
   if (!activeSkill.value) return;
-  
+
   // Oznacz umiejętność jako ukończoną
   const success = DataService.markSkillAsCompleted(activeSkill.value);
-  
+
   if (success) {
     // Zaktualizuj dane użytkownika
     userData.value = DataService.getUserData();
-    
+
     // Znajdź odznakę, która mogła zostać odblokowana
     const badge = userData.value.badges.find(b => b.unlocked && (
       (b.id === 'basic-flow-master' && activeSkill.value === 'basic-flow') ||
       (b.id === '1000-reps')
     ));
-    
+
     if (badge) {
       unlockedBadge.value = badge;
     }
-    
+
     // Usuń ukończoną umiejętność z listy nauki
     if (isInLearningList(activeSkill.value)) {
       learningList.value = learningList.value.filter(id => id !== activeSkill.value);
     }
-    
+
     hideSkillDetail();
     showToast('Umiejętność została oznaczona jako opanowana!');
   } else {

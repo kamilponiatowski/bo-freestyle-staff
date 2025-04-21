@@ -17,7 +17,7 @@
       <div class="container">
         <ul>
           <li>
-            <router-link to="/">Start</router-link>
+            <router-link to="/" exact>Start</router-link>
           </li>
           <li>
             <router-link to="/dashboard">Podsumowanie</router-link>
@@ -66,4 +66,22 @@
 
 <style>
 @import './assets/styles/main.css';
+
+/* Dodatkowy CSS dla poprawy nawigacji */
+nav ul li a.router-link-active,
+nav ul li a.router-link-exact-active {
+  color: var(--primary);
+  position: relative;
+}
+
+nav ul li a.router-link-active::after,
+nav ul li a.router-link-exact-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary);
+}
 </style>

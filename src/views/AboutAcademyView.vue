@@ -212,7 +212,8 @@ const playVideo = () => {
 }
 
 .accent-text {
-    color: var(--secondary);
+    color: #d4a017;
+    font-weight: 700;
 }
 
 .page-title {
@@ -542,5 +543,10 @@ const playVideo = () => {
   background-color: #000;
 }
 
-/* Pozostałe style zostaw bez zmian */
+
+.accent-text {
+    color: #d4a017; /* Ciemniejszy odcień żółtego/złotego dla lepszego kontrastu */
+    font-weight: 700; /* Pogrubienie dla lepszej widoczności */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Cień tekstu dla lepszego kontrastu */
+}
 </style>

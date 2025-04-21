@@ -132,18 +132,18 @@ const formatDate = (dateStr) => {
   }
 };
 
-// Inicjalizuj wykresy
+// Inicjalizacja komponentu
 onMounted(() => {
-  if (progressChart.value && !progressChartInstance.value) {
+  if (progressChart.value) {
     initProgressChart();
   }
   
-  if (categoryChart.value && !categoryChartInstance.value) {
+  if (categoryChart.value) {
     initCategoryChart();
   }
 });
 
-// Zniszcz instancje wykresów przy demontażu komponentu, aby uniknąć memory leaks
+// Zniszcz instancje wykresów przy demontażu komponentu
 onUnmounted(() => {
   if (progressChartInstance.value) {
     progressChartInstance.value.destroy();
@@ -159,6 +159,11 @@ onUnmounted(() => {
 // Inicjalizuj wykres postępu
 const initProgressChart = () => {
   if (!progressChart.value) return;
+  
+  // Zniszcz istniejącą instancję, jeśli istnieje
+  if (progressChartInstance.value) {
+    progressChartInstance.value.destroy();
+  }
   
   const ctx = progressChart.value.getContext('2d');
   
@@ -209,6 +214,11 @@ const initProgressChart = () => {
 // Inicjalizuj wykres kategorii
 const initCategoryChart = () => {
   if (!categoryChart.value) return;
+  
+  // Zniszcz istniejącą instancję, jeśli istnieje
+  if (categoryChartInstance.value) {
+    categoryChartInstance.value.destroy();
+  }
   
   const ctx = categoryChart.value.getContext('2d');
   

@@ -118,10 +118,18 @@
           </div>
 
           <div class="skill-video-container" v-if="activeSkillDetails.videoPath">
-            <div class="video-placeholder">
-              <span class="video-message">Wideo jest niedostępne</span>
-              <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
-            </div>
+            <template v-if="canPlayVideoForSkill(activeSkill)">
+              <video controls>
+                <source :src="getSkillVideo(activeSkill) || undefined" type="video/mp4">
+                Twoja przeglądarka nie obsługuje odtwarzania wideo.
+              </video>
+            </template>
+            <template v-else>
+              <div class="video-placeholder">
+                <span class="video-message">Wideo jest niedostępne</span>
+                <span class="video-submessage">Materiał wideo zostanie dodany w najbliższym czasie</span>
+              </div>
+            </template>
           </div>
 
           <div class="skill-tips">
@@ -179,6 +187,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import DataService from '@/services/DataService';
 import { showToast } from '@/services/ToastService';
+import { getVideoPath, canPlayVideo, getSkillVideoPath } from '@/utils/videoUtils';
 
 // Importujemy typy
 import type {
@@ -198,6 +207,18 @@ const activeSkill = ref<string | null>(null);
 const activeSkillDetails = ref<SkillDetails>({} as SkillDetails);
 const repCount = ref<number>(10);
 const unlockedBadge = ref<Badge | null>(null);
+
+const canPlayVideoForSkill = (skillId: string | null): boolean => {
+  if (!skillId) return false;
+  const videoPath = getSkillVideoPath(skillId);
+  return !!videoPath;
+};
+
+// Pobierz ścieżkę wideo dla umiejętności
+const getSkillVideo = (skillId: string | null): string | undefined => {
+  if (!skillId) return undefined;
+  return getSkillVideoPath(skillId);
+};
 
 // Obliczenie całkowitego postępu - teraz jako stała wartość obliczona jednorazowo
 const totalProgress = computed((): number => {
