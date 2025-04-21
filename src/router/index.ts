@@ -24,6 +24,11 @@ const router = createRouter({
       component: () => import('../views/BadgesView.vue')
     },
     {
+      path: '/skill-catalog',
+      name: 'skill-catalog',
+      component: () => import('../views/SkillCatalogView.vue')
+    },
+    {
       path: '/library',
       name: 'library',
       component: () => import('../views/LibraryView.vue')
@@ -32,6 +37,11 @@ const router = createRouter({
       path: '/progress',
       name: 'progress',
       component: () => import('../views/ProgressView.vue')
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutAcademyView.vue')
     }
   ]
 })

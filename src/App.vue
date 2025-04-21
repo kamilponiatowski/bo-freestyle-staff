@@ -26,6 +26,9 @@
             <router-link to="/skills">Tricki i umiejętności</router-link>
           </li>
           <li>
+            <router-link to="/skill-catalog">Katalog tricków</router-link>
+          </li>
+          <li>
             <router-link to="/badges">Odznaki</router-link>
           </li>
           <li>
@@ -34,13 +37,15 @@
           <li>
             <router-link to="/progress">Mój postęp</router-link>
           </li>
+          <li>
+            <router-link to="/about">O Akademii</router-link>
+          </li>
         </ul>
       </div>
     </nav>
 
     <main>
       <div class="container">
-        <!-- Tutaj będą ładowane komponenty routera -->
         <router-view></router-view>
       </div>
     </main>
@@ -52,13 +57,11 @@
       </div>
     </footer>
 
-    <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Uproszczona wersja, usunięto logikę przełączania widoków
 </script>
 
 <style>
